@@ -1,0 +1,9 @@
+rules:
+  idioms: ["kick the bucket","piece of cake", "hit the nail on the head"]
+  synonym_map:
+    good: [good,great,excellent,superb]
+    bad: [bad, poor, terrible,awful]
+
+  sentence_var:
+    min_len: 5
+    max_len: 50

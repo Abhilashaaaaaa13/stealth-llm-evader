@@ -1,0 +1,16 @@
+model:
+  base: "gpt2"
+  lora_rank: 16
+  lora_alpha: 32
+  ensemble_models: ["gpt2", "microsoft/DialoGPT-medium"]
+
+evasion:
+  burstiness_target:0.9
+  perplexity_min: 20
+  post_process_steps: ["vary_lengths", "paraphrase","inject_idioms"]
+  max_length : 2500
+
+detectors:
+  zerogpt_url: "https://api.zerogpt.com"
+  threshold: 0.20
+
