@@ -3,7 +3,7 @@ import os
 from huggingface_hub import login,snapshot_download
 from dotenv import load_dotenv
 
-drive.mount('/content/drive')
+
 load_dotenv()
 #HF Login
 hf_token = os.getenv('HUGGINGFACE_TOKEN')
