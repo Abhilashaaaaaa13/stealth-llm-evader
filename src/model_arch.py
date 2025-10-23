@@ -10,22 +10,22 @@ def setup_model(config: dict):
 
     model = AutoModelForCausalLM.from_pretrained(model_name)
 
-    #add lora
+    # Add LoRA
     lora_config = LoraConfig(
         r=config['model']['lora_rank'],
-        lora_alpha=config['model']['lora_alpha'],
-        target_modules=["c_attn"]
+        lora_alpha=config['model']['lora_alpha'],  # Comma added here
+        target_modules=["c_attn"],  # For GPT2; adjust for Llama
         lora_dropout=0.1,
     )
-    model = get_peft_model(model,lora_config)
+    model = get_peft_model(model, lora_config)
 
-    return model,tokenizer
+    return model, tokenizer
 
 def setup_ensemble(config: dict):
     """Setup multiple models for ensemble."""
     models = []
     for name in config['model']['ensemble_models']:
-        #temp override for testing
+        # Temp override for testing
         temp_config = config.copy()
         temp_config['model']['base'] = name
         model, _ = setup_model(temp_config)
