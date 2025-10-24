@@ -13,11 +13,16 @@ def setup_model(config: dict):
     # Add LoRA
     lora_config = LoraConfig(
         r=config['model']['lora_rank'],
-        lora_alpha=config['model']['lora_alpha'],  # Comma added here
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],  # 
+        lora_alpha=config['model']['lora_alpha'],
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],  # For Mistral
         lora_dropout=0.1,
     )
     model = get_peft_model(model, lora_config)
+
+    # GPU Move (New – Fix Stuck Load)
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model = model.to(device)
+    print(f"Model loaded on {device}")
 
     return model, tokenizer
 
