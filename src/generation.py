@@ -19,6 +19,7 @@ def generate_text(model, prompt: str, max_length: int, tokenizer=None):
             pad_token_id=tokenizer.eos_token_id,
             eos_token_id=None,
             early_stopping=False,
+            num_beans=1,
         )
     
     generated = tokenizer.decode(outputs[0], skip_special_tokens=True)
