@@ -1,8 +1,8 @@
 model:
-  base: "mistralai/Mistral-7B-Instruct-v0.2"  
+  base: "mistralai/Mistral-7B-Instruct-v0.2"
   lora_rank: 8
   lora_alpha: 32
-  ensemble_models: ["mistralai/Mistral-7B-Instruct-v0.2", "microsoft/DialoGPT-large"]  # DialoGPT ko larger rakho if needed
+  ensemble_models: ["mistralai/Mistral-7B-Instruct-v0.2"]  # Single for test (no DialoGPT error)
 
 evasion:
   burstiness_target: 0.9  # Std dev of sentence lengths
