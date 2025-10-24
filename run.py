@@ -11,7 +11,7 @@ from src.model_arch import setup_model, setup_ensemble
 from src.training import fine_tune
 from src.generation import generate_text
 from src.post_process import apply_post_processing
-from src.ensemble import ensemble_large
+from src.ensemble import ensemble_merge
 from src.eval import run_evaluation
 
 logging.basicConfig(level=logging.INFO)
