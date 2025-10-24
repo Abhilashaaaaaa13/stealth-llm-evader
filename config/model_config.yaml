@@ -1,16 +1,15 @@
 model:
-  base: "gpt2"
+  base: "gpt2"  # Start small; change to "meta-llama/Llama-2-7b-hf" for better (needs HF approval)
   lora_rank: 16
   lora_alpha: 32
-  ensemble_models: ["gpt2", "microsoft/DialoGPT-medium"]
+  ensemble_models: ["gpt2", "microsoft/DialoGPT-medium"]  # 2 for simple ensemble
 
 evasion:
-  burstiness_target:0.9
+  burstiness_target: 0.9  # Std dev of sentence lengths
   perplexity_min: 20
-  post_process_steps: ["vary_lengths", "paraphrase","inject_idioms"]
-  max_length : 2500
+  post_process_steps: ["vary_lengths", "paraphrase", "inject_idioms"]
+  max_length: 2500  # Tokens for ~2000-3000 words
 
 detectors:
-  zerogpt_url: "https://api.zerogpt.com"
-  threshold: 0.20
-
+  zerogpt_url: "https://api.zerogpt.com"  # Placeholder; get real API
+  threshold: 0.20  # <20% AI score
