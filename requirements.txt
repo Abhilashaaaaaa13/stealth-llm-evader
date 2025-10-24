@@ -11,3 +11,4 @@ wandb>=0.15.0  # Optional, comment if no login
 scikit-learn>=1.3.0
 requests>=2.31.0
 huggingface-hub>=0.17.0
+bitsandbytes>=0.41.0
