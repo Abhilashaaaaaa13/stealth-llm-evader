@@ -1,5 +1,6 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import LoraConfig, get_peft_model
+import torch
 
 def setup_model(config: dict):
     """Load base model with LoRA for fine-tuning."""
