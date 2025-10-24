@@ -1,8 +1,8 @@
 model:
-  base: "gpt2"  # Start small; change to "meta-llama/Llama-2-7b-hf" for better (needs HF approval)
-  lora_rank: 16
+  base: "mistralai/Mistral-7B-Instruct-v0.2"  
+  lora_rank: 8
   lora_alpha: 32
-  ensemble_models: ["gpt2", "microsoft/DialoGPT-medium"]  # 2 for simple ensemble
+  ensemble_models: ["mistralai/Mistral-7B-Instruct-v0.2", "microsoft/DialoGPT-large"]  # DialoGPT ko larger rakho if needed
 
 evasion:
   burstiness_target: 0.9  # Std dev of sentence lengths

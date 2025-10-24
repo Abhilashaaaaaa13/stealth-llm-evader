@@ -14,7 +14,7 @@ def setup_model(config: dict):
     lora_config = LoraConfig(
         r=config['model']['lora_rank'],
         lora_alpha=config['model']['lora_alpha'],  # Comma added here
-        target_modules=["c_attn"],  # For GPT2; adjust for Llama
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],  # 
         lora_dropout=0.1,
     )
     model = get_peft_model(model, lora_config)
