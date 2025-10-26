@@ -9,27 +9,28 @@ def setup_model(config: dict):
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    # BitsAndBytesConfig for 4-bit quantization (better for low VRAM)
+    # BitsAndBytesConfig for 4-bit quantization
     quantization_config = BitsAndBytesConfig(
-        load_in_4bit=True,  # 4-bit for ~3GB VRAM usage
-        bnb_4bit_compute_dtype=torch.float16,  # FP16 compute for speed
-        bnb_4bit_use_double_quant=True,  # Extra memory saving
-        llm_int8_enable_fp32_cpu_offload=True,  # CPU fallback if VRAM full
+        load_in_4bit=True,
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_use_double_quant=True,
+        llm_int8_enable_fp32_cpu_offload=True,
     )
 
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        quantization_config=quantization_config,  # Quantization config
-        dtype=torch.float16,  # Half precision
-        device_map="auto",  # Auto GPU/CPU split
-        trust_remote_code=True,  # For Mistral if needed
+        quantization_config=quantization_config,
+        dtype=torch.float16,
+        device_map="balanced",  # Better split for low VRAM (GPU/CPU)
+        low_cpu_mem_usage=True,  # Low memory load, avoids meta tensor bug
+        trust_remote_code=True,
     )
 
-    # Add LoRA (small rank for memory)
+    # Add LoRA
     lora_config = LoraConfig(
         r=config['model']['lora_rank'],
         lora_alpha=config['model']['lora_alpha'],
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],  # For Mistral
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
         lora_dropout=0.1,
     )
     model = get_peft_model(model, lora_config)
