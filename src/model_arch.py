@@ -3,26 +3,29 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model
 
 def setup_model(config: dict):
-    """Load base model with LoRA for fine-tuning – memory efficient."""
+    """Load base model with LoRA for fine-tuning – memory efficient for 4GB VRAM."""
     model_name = config['model']['base']
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    # Memory efficient load: fp16 + 8-bit quantization with CPU offload
+    # BitsAndBytesConfig for 4-bit quantization (better for low VRAM)
     quantization_config = BitsAndBytesConfig(
-        load_in_8bit=True,
-        llm_int8_enable_fp32_cpu_offload=True  # Enables CPU fallback for low VRAM
+        load_in_4bit=True,  # 4-bit for ~3GB VRAM usage
+        bnb_4bit_compute_dtype=torch.float16,  # FP16 compute for speed
+        bnb_4bit_use_double_quant=True,  # Extra memory saving
+        llm_int8_enable_fp32_cpu_offload=True,  # CPU fallback if VRAM full
     )
 
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        quantization_config=quantization_config,  # New: Use this instead of load_in_8bit
-        dtype=torch.float16,  # Changed: Use 'dtype' (not torch_dtype)
-        device_map="auto",  # Keeps auto placement (GPU/CPU split)
+        quantization_config=quantization_config,  # Quantization config
+        dtype=torch.float16,  # Half precision
+        device_map="auto",  # Auto GPU/CPU split
+        trust_remote_code=True,  # For Mistral if needed
     )
 
-    # Add LoRA (smaller rank for memory)
+    # Add LoRA (small rank for memory)
     lora_config = LoraConfig(
         r=config['model']['lora_rank'],
         lora_alpha=config['model']['lora_alpha'],
@@ -31,9 +34,9 @@ def setup_model(config: dict):
     )
     model = get_peft_model(model, lora_config)
 
-    # No manual .to(device) – device_map="auto" handles it
+    # Print device info
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    vram_info = f"{torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB" if torch.cuda.is_available() else 'N/A'
+    vram_info = f"{torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB" if device == 'cuda' else 'N/A'
     print(f"Model loaded on {device} with {vram_info} VRAM available")
 
     return model, tokenizer
