@@ -62,14 +62,16 @@ def vary_sentence_lengths(sentences, var_config):
 
 def paraphrase_sentences(sentences):
     def paraphrase_sent(sent):
-        #simple : synonym replace for first word
         words = sent.split()
         if words:
-            for syn in wordnet.synsets(words[0]):
-                if syn.lemmas():
-                    new_word = syn.lemmas()[0].name()
-                    return sent.replace(words[0],new_word,1)
-        return sent
+            # Replace 1-2 words with synonyms
+            for i, word in enumerate(words[:2]):
+                for syn in wordnet.synsets(word):
+                    if syn.lemmas():
+                        new_word = syn.lemmas()[0].name()
+                        words[i] = new_word
+                        break
+        return ' '.join(words)
     return [paraphrase_sent(s) for s in sentences]
 
 def inject_idioms(sentences, idioms):

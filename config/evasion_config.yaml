@@ -1,9 +1,9 @@
 rules:
-  idioms: ["kick the bucket","piece of cake", "hit the nail on the head"]
+  idioms: ["kick the bucket", "piece of cake", "hit the nail on the head", "break a leg", "spill the beans", "burn the midnight oil"]  # More idioms for variety
   synonym_map:
-    good: [good,great,excellent,superb]
-    bad: [bad, poor, terrible,awful]
-
+    good: [good, great, excellent, superb, fantastic, awesome]
+    bad: [bad, poor, terrible, awful, dreadful, lousy]
+    write: [write, compose, craft, pen, scribble, jot]
   sentence_var:
     min_len: 5
-    max_len: 50
+    max_len: 60  # Wider range for burstiness
