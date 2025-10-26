@@ -30,7 +30,7 @@ def setup_model(config: dict):
     lora_config = LoraConfig(
         r=config['model']['lora_rank'],
         lora_alpha=config['model']['lora_alpha'],
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+        target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj", "down_proj"],
         lora_dropout=0.1,
     )
     model = get_peft_model(model, lora_config)

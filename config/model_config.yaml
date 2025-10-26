@@ -1,10 +1,14 @@
 model:
-  base: "mistralai/Mistral-7B-Instruct-v0.2"
-  lora_rank: 4
+  base: "meta-llama/Meta-Llama-3-8B-Instruct"  # Llama-3-8B
+  lora_rank: 8
   lora_alpha: 16
-  ensemble_models: ["mistralai/Mistral-7B-Instruct-v0.2"]  # Single for test (no DialoGPT error)
+  ensemble_models: ["meta-llama/Meta-Llama-3-8B-Instruct"]  # Single for test
 
 evasion:
+  max_length: 3000  # Tokens for ~2250 words (Llama limit 8k)
+
+detectors:
+  threshold: 0.20
   burstiness_target: 0.9  # Std dev of sentence lengths
   perplexity_min: 20
   post_process_steps: ["vary_lengths", "paraphrase", "inject_idioms"]
