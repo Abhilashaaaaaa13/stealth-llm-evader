@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model
 
 def setup_model(config: dict):
@@ -9,12 +9,17 @@ def setup_model(config: dict):
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    # Memory efficient load: fp16 + 8-bit quantization
+    # Memory efficient load: fp16 + 8-bit quantization with CPU offload
+    quantization_config = BitsAndBytesConfig(
+        load_in_8bit=True,
+        llm_int8_enable_fp32_cpu_offload=True  # Enables CPU fallback for low VRAM
+    )
+
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        torch_dtype=torch.float16,  # Half precision – halves memory
-        load_in_8bit=True,  # 8-bit quantization – fits in 4GB VRAM
-        device_map="auto",  # Auto GPU placement
+        quantization_config=quantization_config,  # New: Use this instead of load_in_8bit
+        dtype=torch.float16,  # Changed: Use 'dtype' (not torch_dtype)
+        device_map="auto",  # Keeps auto placement (GPU/CPU split)
     )
 
     # Add LoRA (smaller rank for memory)
@@ -26,10 +31,10 @@ def setup_model(config: dict):
     )
     model = get_peft_model(model, lora_config)
 
-    # Device move (GPU if available)
+    # No manual .to(device) – device_map="auto" handles it
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model = model.to(device)
-    print(f"Model loaded on {device} with {torch.cuda.get_device_properties(0).total_memory / 1e9 if device == 'cuda' else 'N/A'} GB VRAM")
+    vram_info = f"{torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB" if torch.cuda.is_available() else 'N/A'
+    print(f"Model loaded on {device} with {vram_info} VRAM available")
 
     return model, tokenizer
 
