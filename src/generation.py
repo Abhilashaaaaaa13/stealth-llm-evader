@@ -10,7 +10,7 @@ def generate_text(model, prompt: str, max_length: int, tokenizer=None):
     
     # Device setup for GPU (if available)
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model = model.to(device)
+    print(f"Generating on {device}")
     
     inputs = tokenizer(prompt, return_tensors='pt', truncation=True, max_length=512)
     inputs = {k: v.to(device) for k, v in inputs.items()}  # Move to GPU
